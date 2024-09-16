@@ -23,6 +23,7 @@ export async function generateImagePrompt(name: string) {
       ],
     });
     const data = await response.json();
+    // console.log(data);
     const image_description = data.choices[0].message.content;
     return image_description as string;
   } catch (error) {
@@ -39,6 +40,7 @@ export async function generateImage(image_description: string) {
       size: "256x256",
     });
     const data = await response.json();
+    // console.log(data);
     const image_url = data.data[0].url;
     return image_url as string;
   } catch (error) {

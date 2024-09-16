@@ -52,11 +52,12 @@ const CreateNoteDialog = (props: Props) => {
       },
       onError: (error) => {
         console.error(error);
+        // console.error("Error creating notebook:", error.response || error.message);
         window.alert("Failed to create new notebook");
       },
     });
   };
-
+ 
   return (
     <Dialog>
       <DialogTrigger>
