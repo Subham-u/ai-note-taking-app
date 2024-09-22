@@ -1,5 +1,4 @@
 // import { uploadFile } from "./firebase";
-import { Configuration, OpenAIApi } from "openai-edge";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import fs from 'fs';
 import path from 'path';
