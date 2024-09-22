@@ -5,12 +5,7 @@ import fs from 'fs';
 import path from 'path';
 import { uploadOnCloudinary } from "./cloudinary";
 
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-
-const GOOGLE_API_KEY = "AIzaSyCm7Rb4HKn6zq6iERcjxeoMKPLy2fD08Aw";
+const GOOGLE_API_KEY = process.env.GOOGLE_API_KEY as string;
 
 const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 export async function generateImagePrompt(name: string) {
