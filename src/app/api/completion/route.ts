@@ -1,38 +1,17 @@
-import { OpenAIApi, Configuration } from "openai-edge";
-import { OpenAIStream, StreamingTextResponse } from "ai";
+// import { OpenAIApi, Configuration } from "openai-edge";
+import { GoogleGenerativeAI } from "@google/generative-ai";
+import { NextResponse } from "next/server";
 // /api/completion
-const config = new Configuration({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
-const openai = new OpenAIApi(config);
-
 export async function POST(req: Request) {
   // extract the prompt from the body
   const { prompt } = await req.json();
+  const GOOGLE_API_KEY = "AIzaSyCm7Rb4HKn6zq6iERcjxeoMKPLy2fD08Aw";
+  const genAI = new GoogleGenerativeAI(GOOGLE_API_KEY);
 
-  const response = await openai.createChatCompletion({
-    model: "gpt-3.5-turbo",
-    messages: [
-      {
-        role: "system",
-        content: `You are a helpful AI embedded in a notion text editor app that is used to autocomplete sentences
-            The traits of AI include expert knowledge, helpfulness, cleverness, and articulateness.
-        AI is a well-behaved and well-mannered individual.
-        AI is always friendly, kind, and inspiring, and he is eager to provide vivid and thoughtful responses to the user.`,
-      },
-      {
-        role: "user",
-        content: `
-        I am writing a piece of text in a notion text editor app.
-        Help me complete my train of thought here: ##${prompt}##
-        keep the tone of the text consistent with the rest of the text.
-        keep the response short and sweet.
-        `,
-      },
-    ],
-    stream: true,
-  });
-  const stream = OpenAIStream(response);
-  return new StreamingTextResponse(stream);
+  const pass = `I am writing a piece of text in a notion text editor app.
+  Help me complete my train of thought here: ${prompt} in short less than 50 words`;
+
+  const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
+  const autocomplete = await model.generateContent(pass);
+  return NextResponse.json({ data: autocomplete.response.text()}, { status: 201 });
 }

@@ -1,0 +1,17 @@
+{
+    "crons": [
+      {
+        "path": "/api/completion",
+        "schedule": "* * * * *"
+      },
+      {
+        "path": "/api/createNoteBook",
+        "schedule": "0 * * * *"
+      },
+      {
+        "path": "/api/every-day",
+        "schedule": "0 0 * * *"
+      }
+    ],
+    "cleanUrls": true
+  }
