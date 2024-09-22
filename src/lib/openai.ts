@@ -23,6 +23,51 @@ export async function generateImagePrompt(name: string) {
   return image_description.response.text() as string;
 }
 
+export async function generateImage(imageDescription : string,name :string) {
+  const form = new FormData()
+  const prompt = `${imageDescription}`;
+  form.append('prompt', `${prompt}`)
+
+  try {
+    const response = await fetch('https://clipdrop-api.co/text-to-image/v1', {
+      method: 'POST',
+      headers: {
+        'x-api-key': "15d2ae6daed9f80f9437e52d6b4fddfa11eba7c6a7890c7b9e07b73bdc13063570d78b5750b66be463f72ed317fb6cd5",
+      },
+      body: form,
+    });
+
+    if (!response.ok) {
+      const errorText = await response.text(); 
+      console.error(`Error generating image: ${errorText}`);
+      throw new Error(`HTTP error! status: ${response.status}`);
+    }
+
+    const buffer = await response.arrayBuffer();
+    
+    const imagePath = path.join('/Users/subhammahapatra/desktop', `${name.replace(/\s+/g, '-').toLowerCase()}.png`);
+
+    console.log('Image generated successfully!');
+
+    fs.writeFile(imagePath, Buffer.from(buffer), (err) => {
+      if (err) {
+        console.error('Error saving image:', err);
+      } else {
+        console.log(`Image saved successfully to ${imagePath}`);
+      }
+    });
+
+   const imageUrl = await uploadOnCloudinary(imagePath)
+   if(!imageUrl){
+    return null;
+   }
+   return imageUrl.url as string
+
+  } catch (error) {
+    console.error('Error generating image:', error);
+    throw error; 
+}
+}
 
 // export async function generateImagePrompt(name: string) {
 //   try {
@@ -79,56 +124,3 @@ export async function generateImagePrompt(name: string) {
 // }
 
 // const fs = require('fs');
-
-export async function generateImage(imageDescription : string,name :string) {
-  const form = new FormData()
-  const prompt = `${imageDescription}`;
-  form.append('prompt', `${prompt}`)
-
-  try {
-    const response = await fetch('https://clipdrop-api.co/text-to-image/v1', {
-      method: 'POST',
-      headers: {
-        'x-api-key': "15d2ae6daed9f80f9437e52d6b4fddfa11eba7c6a7890c7b9e07b73bdc13063570d78b5750b66be463f72ed317fb6cd5",
-      },
-      body: form,
-    });
-
-    if (!response.ok) {
-      const errorText = await response.text(); 
-      console.error(`Error generating image: ${errorText}`);
-      throw new Error(`HTTP error! status: ${response.status}`);
-    }
-    // response.json().then(data => {
-    //   const imageUrl = data.imageUrl; // assuming the image URL is under `imageUrl`
-    //   console.log(imageUrl);
-    // }).catch(err => console.error("Error reading JSON:", err));
-    // response[Symbol.for('state')].urlList[0].href;
-    // console.log(responseUrl);
-
-    const buffer = await response.arrayBuffer();
-    
-    const imagePath = path.join('/Users/subhammahapatra/desktop', `${name.replace(/\s+/g, '-').toLowerCase()}.png`);
-
-    console.log('Image generated successfully!');
-
-    fs.writeFile(imagePath, Buffer.from(buffer), (err) => {
-      if (err) {
-        console.error('Error saving image:', err);
-      } else {
-        console.log(`Image saved successfully to ${imagePath}`);
-      }
-    });
-
-   const imageUrl = await uploadOnCloudinary(imagePath)
-   if(!imageUrl){
-    return null;
-   }
-
-   return imageUrl.url as string
-
-  } catch (error) {
-    console.error('Error generating image:', error);
-    throw error; 
-}
-}
